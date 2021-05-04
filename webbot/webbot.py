@@ -37,10 +37,13 @@ class Browser:
         - List containing all the errors which might have occurred during performing an action like click ,type etc.
     """
 
-    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None):
+    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None):
+        add_arguments = add_arguments or []
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
+        for arg in add_arguments:
+            options.add_argument(arg)
         if downloadPath is not None and isinstance(downloadPath,str):
             absolutePath = os.path.abspath(downloadPath)
             if(not os.path.isdir(absolutePath)):
