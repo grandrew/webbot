@@ -1,8 +1,10 @@
+from mmap import MADV_CORE
 import os
 import re
 import string
 import errno
 import sys
+import random
 from collections import OrderedDict
 
 from selenium import webdriver
@@ -431,6 +433,7 @@ class Browser:
             - number: If there are multiple elements matching the criteria of other parameters,
               number specifies which element to select for the operation.
               This defaults to 1 and selects the first element to perform the action.
+              If set to -1 will click on one randomly picked element
 
             - multiple: Defaults to False.
               If True, the specified action is performed on all the elements matching the criteria and not just the first element.
@@ -470,6 +473,10 @@ class Browser:
         maxElements = self.__find_element(text, tag, classname, id, number, css_selector, xpath, loose_match)
 
         temp_element_index_ = 1
+
+        if number == -1:
+            maxElements = list(maxElements)
+            number = random.randint(0, len(maxElements))
 
         for element in maxElements:
             try:
