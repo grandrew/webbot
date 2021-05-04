@@ -28,6 +28,9 @@ class Browser:
         :Args:
             - showWindow : If true , will run a headless browser without showing GUI window.
             - proxy : Url of any optional proxy server.
+            - add_arguments : list of strings of additional arguments for ChromeDriver for
+            use with ChromeOptions().add_argument("--my_arg...")
+            - window_size : a list of [<Width>, <Height>] for browser window size
 
 
 
@@ -39,7 +42,7 @@ class Browser:
         - List containing all the errors which might have occurred during performing an action like click ,type etc.
     """
 
-    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None):
+    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None, window_size=None):
         add_arguments = add_arguments or []
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-dev-shm-usage")
@@ -72,6 +75,8 @@ class Browser:
         os.chmod(driverpath, 0o755)
 
         self.driver = webdriver.Chrome(executable_path=driverpath, options=options)
+        if window_size:
+            self.driver.set_window_size(*window_size)
         self.Key = Keys
         self.errors = []
 
