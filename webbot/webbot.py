@@ -42,7 +42,8 @@ class Browser:
         - List containing all the errors which might have occurred during performing an action like click ,type etc.
     """
 
-    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None, window_size=None):
+    def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None, window_size=None,
+                 driver_path=""):
         add_arguments = add_arguments or []
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-dev-shm-usage")
@@ -70,6 +71,10 @@ class Browser:
             driverfilename = 'chrome_windows.exe'
         elif sys.platform == 'darwin':
             driverfilename = 'chrome_mac'
+        
+        if driver_path:
+            driverpath = driver_path
+        else:
         driverpath = os.path.join(os.path.split(__file__)[0], 'drivers{0}{1}'.format(os.path.sep, driverfilename))
 
         os.chmod(driverpath, 0o755)
