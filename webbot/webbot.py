@@ -67,6 +67,8 @@ class Browser:
         driverfilename = ''
         if sys.platform == 'linux' or sys.platform == 'linux2':
             driverfilename = 'chrome_linux'
+            if showWindow and not os.environ.get("DISPLAY", ""):
+                raise Exception("DISPLAY variable not set and non-headless mode requested")
         elif sys.platform == 'win32':
             driverfilename = 'chrome_windows.exe'
         elif sys.platform == 'darwin':
