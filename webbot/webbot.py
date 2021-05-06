@@ -43,7 +43,7 @@ class Browser:
     """
 
     def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None, window_size=None,
-                 driver_path=""):
+                 driver_path="", seleniumwire_options=None):
         add_arguments = add_arguments or []
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-dev-shm-usage")
@@ -75,11 +75,16 @@ class Browser:
         if driver_path:
             driverpath = driver_path
         else:
-        driverpath = os.path.join(os.path.split(__file__)[0], 'drivers{0}{1}'.format(os.path.sep, driverfilename))
+            driverpath = os.path.join(os.path.split(__file__)[0], 'drivers{0}{1}'.format(os.path.sep, driverfilename))
 
-        os.chmod(driverpath, 0o755)
+            os.chmod(driverpath, 0o755)
 
-        self.driver = webdriver.Chrome(executable_path=driverpath, options=options)
+        if seleniumwire_options is not None:
+            import seleniumwire.webdriver
+            self.driver = seleniumwire.webdriver.Chrome(executable_path=driverpath, options=options,
+                                                        seleniumwire_options=seleniumwire_options)
+        else:
+            self.driver = webdriver.Chrome(executable_path=driverpath, options=options)
         if window_size:
             self.driver.set_window_size(*window_size)
         self.Key = Keys
