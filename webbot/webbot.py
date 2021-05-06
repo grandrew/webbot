@@ -1,4 +1,4 @@
-from mmap import MADV_CORE
+# from mmap import MADV_CORE
 import os
 import re
 import string
@@ -48,6 +48,9 @@ class Browser:
         options = webdriver.ChromeOptions()
         options.add_argument("--disable-dev-shm-usage")
         options.add_argument("--no-sandbox")
+        options.add_experimental_option("prefs", { 
+            "profile.default_content_setting_values.notifications": 1 
+        })
         for arg in add_arguments:
             options.add_argument(arg)
         if downloadPath is not None and isinstance(downloadPath,str):
@@ -78,7 +81,6 @@ class Browser:
             driverpath = driver_path
         else:
             driverpath = os.path.join(os.path.split(__file__)[0], 'drivers{0}{1}'.format(os.path.sep, driverfilename))
-
             os.chmod(driverpath, 0o755)
 
         if seleniumwire_options is not None:
