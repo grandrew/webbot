@@ -476,7 +476,7 @@ class Browser:
 
         self.__reset_error()
 
-        if not (text or id or classname or css_selector or xpath):
+        if not (text or id or classname or css_selector or xpath or tag):
             ActionChains(self.driver).click().perform()
             return
 
