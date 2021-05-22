@@ -7,7 +7,8 @@ import sys
 import random
 from collections import OrderedDict
 
-from selenium import webdriver
+# from selenium import webdriver
+import undetected_chromedriver as webdriver
 from selenium.common import exceptions
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -43,14 +44,25 @@ class Browser:
     """
 
     def __init__(self, showWindow=True, proxy=None , downloadPath:str=None, add_arguments=None, window_size=None,
-                 driver_path="", seleniumwire_options=None):
+                 driver_path="", seleniumwire_options=None, driver=None):
         add_arguments = add_arguments or []
-        options = webdriver.ChromeOptions()
-        options.add_argument("--disable-dev-shm-usage")
-        options.add_argument("--no-sandbox")
-        options.add_experimental_option("prefs", { 
-            "profile.default_content_setting_values.notifications": 1 
-        })
+        if seleniumwire_options is not None:
+            # import seleniumwire
+            # import seleniumwire.webdriver
+            import seleniumwire.undetected_chromedriver.v2 # import Chrome, ChromeOptions
+            # import seleniumwire.undetected_chromedriver # import Chrome, ChromeOptions
+            options = seleniumwire.undetected_chromedriver.v2.ChromeOptions()
+            # options = seleniumwire.webdriver.ChromeOptions()
+        else:
+            if driver is not None:
+                options = driver.ChromeOptions()
+            else:
+                options = webdriver.ChromeOptions()
+        # options.add_argument("--disable-dev-shm-usage")
+        # options.add_argument("--no-sandbox")
+        # options.add_experimental_option("prefs", { 
+            # "profile.default_content_setting_values.notifications": 1 
+        # })
         for arg in add_arguments:
             options.add_argument(arg)
         if downloadPath is not None and isinstance(downloadPath,str):
@@ -84,11 +96,24 @@ class Browser:
             os.chmod(driverpath, 0o755)
 
         if seleniumwire_options is not None:
-            import seleniumwire.webdriver
-            self.driver = seleniumwire.webdriver.Chrome(executable_path=driverpath, options=options,
-                                                        seleniumwire_options=seleniumwire_options)
-        else:
+            import seleniumwire.undetected_chromedriver.v2 # import Chrome, ChromeOptions
+            # import seleniumwire.undetected_chromedriver # import Chrome, ChromeOptions
+            # import seleniumwire.webdriver
+            # import seleniumwire.webdriver
+            self.driver = seleniumwire.undetected_chromedriver.v2.Chrome(
+            # self.driver = seleniumwire.undetected_chromedriver.Chrome(
+                                        executable_path=driverpath, options=options,
+                                        seleniumwire_options=seleniumwire_options)
+            # self.driver = seleniumwire.webdriver.Chrome(executable_path=driverpath, options=options,
+                                                        # seleniumwire_options=seleniumwire_options)
+        elif driver is None:
             self.driver = webdriver.Chrome(executable_path=driverpath, options=options)
+        elif driver is not None:
+            options.add_argument(f'--proxy-server=socks5://127.0.0.1:9050')
+            self.driver = driver.Chrome(options=options)
+        else:
+            raise NotImplementedError("Options combination is not implemented")
+
         if window_size:
             self.driver.set_window_size(*window_size)
         self.Key = Keys
